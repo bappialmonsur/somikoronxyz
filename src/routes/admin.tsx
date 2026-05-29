@@ -1,6 +1,8 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useSession } from "@/hooks/use-auth";
 import { useMyAccess, type TeacherFeature } from "@/hooks/use-access";
+import { useAdminNotifications, requestPushPermission, type AdminCounts } from "@/hooks/use-admin-notifications";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
