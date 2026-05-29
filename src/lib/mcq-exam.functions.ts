@@ -129,6 +129,7 @@ export const addManualQuestion = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => manualSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { userId } = context;
+    await assertAdmin(userId);
     const { error } = await supabaseAdmin.from("mcq_questions").insert({
       class_level: data.classLevel as any,
       subject: data.subject,
