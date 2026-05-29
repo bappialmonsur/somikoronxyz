@@ -27,6 +27,7 @@ import { Route as AdminTeachersRouteImport } from './routes/admin.teachers'
 import { Route as AdminStudentsRouteImport } from './routes/admin.students'
 import { Route as AdminSmsRouteImport } from './routes/admin.sms'
 import { Route as AdminSiteRouteImport } from './routes/admin.site'
+import { Route as AdminSecurityRouteImport } from './routes/admin.security'
 import { Route as AdminResultsRouteImport } from './routes/admin.results'
 import { Route as AdminQuestionBankRouteImport } from './routes/admin.question-bank'
 import { Route as AdminPhonebookRouteImport } from './routes/admin.phonebook'
@@ -130,6 +131,11 @@ const AdminSiteRoute = AdminSiteRouteImport.update({
   path: '/site',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSecurityRoute = AdminSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminResultsRoute = AdminResultsRouteImport.update({
   id: '/results',
   path: '/results',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/admin/phonebook': typeof AdminPhonebookRoute
   '/admin/question-bank': typeof AdminQuestionBankRoute
   '/admin/results': typeof AdminResultsRouteWithChildren
+  '/admin/security': typeof AdminSecurityRoute
   '/admin/site': typeof AdminSiteRoute
   '/admin/sms': typeof AdminSmsRoute
   '/admin/students': typeof AdminStudentsRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/admin/notices': typeof AdminNoticesRoute
   '/admin/phonebook': typeof AdminPhonebookRoute
   '/admin/question-bank': typeof AdminQuestionBankRoute
+  '/admin/security': typeof AdminSecurityRoute
   '/admin/site': typeof AdminSiteRoute
   '/admin/sms': typeof AdminSmsRoute
   '/admin/students': typeof AdminStudentsRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/admin/phonebook': typeof AdminPhonebookRoute
   '/admin/question-bank': typeof AdminQuestionBankRoute
   '/admin/results': typeof AdminResultsRouteWithChildren
+  '/admin/security': typeof AdminSecurityRoute
   '/admin/site': typeof AdminSiteRoute
   '/admin/sms': typeof AdminSmsRoute
   '/admin/students': typeof AdminStudentsRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/admin/phonebook'
     | '/admin/question-bank'
     | '/admin/results'
+    | '/admin/security'
     | '/admin/site'
     | '/admin/sms'
     | '/admin/students'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/admin/notices'
     | '/admin/phonebook'
     | '/admin/question-bank'
+    | '/admin/security'
     | '/admin/site'
     | '/admin/sms'
     | '/admin/students'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/admin/phonebook'
     | '/admin/question-bank'
     | '/admin/results'
+    | '/admin/security'
     | '/admin/site'
     | '/admin/sms'
     | '/admin/students'
@@ -516,6 +528,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSiteRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/security': {
+      id: '/admin/security'
+      path: '/security'
+      fullPath: '/admin/security'
+      preLoaderRoute: typeof AdminSecurityRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/results': {
       id: '/admin/results'
       path: '/results'
@@ -628,6 +647,7 @@ interface AdminRouteChildren {
   AdminPhonebookRoute: typeof AdminPhonebookRoute
   AdminQuestionBankRoute: typeof AdminQuestionBankRoute
   AdminResultsRoute: typeof AdminResultsRouteWithChildren
+  AdminSecurityRoute: typeof AdminSecurityRoute
   AdminSiteRoute: typeof AdminSiteRoute
   AdminSmsRoute: typeof AdminSmsRoute
   AdminStudentsRoute: typeof AdminStudentsRoute
@@ -646,6 +666,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPhonebookRoute: AdminPhonebookRoute,
   AdminQuestionBankRoute: AdminQuestionBankRoute,
   AdminResultsRoute: AdminResultsRouteWithChildren,
+  AdminSecurityRoute: AdminSecurityRoute,
   AdminSiteRoute: AdminSiteRoute,
   AdminSmsRoute: AdminSmsRoute,
   AdminStudentsRoute: AdminStudentsRoute,
@@ -691,3 +712,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
