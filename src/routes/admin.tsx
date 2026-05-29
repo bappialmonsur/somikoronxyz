@@ -57,11 +57,14 @@ type MenuItem = {
   icon: typeof LayoutDashboard;
   exact?: boolean;
   feature?: TeacherFeature;
+  badge?: "pending" | "messages";
 };
 
 const menu: MenuItem[] = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, exact: true },
-  { title: "নিউজফিড পোস্ট", url: "/admin/feed", icon: Newspaper, feature: "newsfeed" },
+  { title: "নিউজফিড", url: "/admin/newsfeed", icon: Newspaper, feature: "newsfeed", exact: true },
+  { title: "নিউজফিড পোস্ট", url: "/admin/feed", icon: Newspaper, feature: "newsfeed", badge: "pending" },
+  { title: "মেসেজ", url: "/admin/messages", icon: MessageSquare, badge: "messages" },
   { title: "ছাত্রছাত্রী ভর্তি", url: "/admin/admission", icon: UserPlus, feature: "admission" },
   { title: "সকল শিক্ষার্থী", url: "/admin/students", icon: Users, feature: "admission" },
   { title: "ফোনবুক", url: "/admin/phonebook", icon: BookUser, feature: "admission" },
