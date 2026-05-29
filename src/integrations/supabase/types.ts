@@ -401,6 +401,7 @@ export type Database = {
           is_active: boolean
           mother_name: string | null
           phone: string | null
+          photo_path: string | null
           roll: string | null
           school_name: string | null
           user_id: string | null
@@ -420,6 +421,7 @@ export type Database = {
           is_active?: boolean
           mother_name?: string | null
           phone?: string | null
+          photo_path?: string | null
           roll?: string | null
           school_name?: string | null
           user_id?: string | null
@@ -439,6 +441,7 @@ export type Database = {
           is_active?: boolean
           mother_name?: string | null
           phone?: string | null
+          photo_path?: string | null
           roll?: string | null
           school_name?: string | null
           user_id?: string | null
