@@ -34,6 +34,7 @@ import {
   Bell,
   BarChart3,
   Database,
+  Newspaper,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
