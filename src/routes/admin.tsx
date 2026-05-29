@@ -141,7 +141,7 @@ function AdminLayout() {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-academy-soft" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
-        <PanelSidebar items={visibleMenu} subtitle={isAdmin ? "শিক্ষা পরিবার" : "শিক্ষক"} onLogout={onLogout} />
+        <PanelSidebar items={visibleMenu} subtitle={isAdmin ? "শিক্ষা পরিবার" : "শিক্ষক"} onLogout={onLogout} counts={counts} />
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 bg-white border-b border-academy-navy/10 flex items-center px-4 gap-2 sticky top-0 z-10">
             <SidebarTrigger />
