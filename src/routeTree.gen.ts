@@ -20,6 +20,7 @@ import { Route as StudentProfileRouteImport } from './routes/student.profile'
 import { Route as StudentPdfsRouteImport } from './routes/student.pdfs'
 import { Route as StudentNoticesRouteImport } from './routes/student.notices'
 import { Route as StudentExamRouteImport } from './routes/student.exam'
+import { Route as StudentDashboardRouteImport } from './routes/student.dashboard'
 import { Route as StudentAttendanceRouteImport } from './routes/student.attendance'
 import { Route as StudentAnalysisRouteImport } from './routes/student.analysis'
 import { Route as AdminStudentsRouteImport } from './routes/admin.students'
@@ -30,6 +31,7 @@ import { Route as AdminQuestionBankRouteImport } from './routes/admin.question-b
 import { Route as AdminPhonebookRouteImport } from './routes/admin.phonebook'
 import { Route as AdminNoticesRouteImport } from './routes/admin.notices'
 import { Route as AdminMarksheetRouteImport } from './routes/admin.marksheet'
+import { Route as AdminFeedRouteImport } from './routes/admin.feed'
 import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
 import { Route as AdminAnalysisRouteImport } from './routes/admin.analysis'
 import { Route as AdminAdmissionRouteImport } from './routes/admin.admission'
@@ -92,6 +94,11 @@ const StudentExamRoute = StudentExamRouteImport.update({
   path: '/exam',
   getParentRoute: () => StudentRoute,
 } as any)
+const StudentDashboardRoute = StudentDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => StudentRoute,
+} as any)
 const StudentAttendanceRoute = StudentAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
@@ -142,6 +149,11 @@ const AdminMarksheetRoute = AdminMarksheetRouteImport.update({
   path: '/marksheet',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFeedRoute = AdminFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
@@ -182,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/admin/admission': typeof AdminAdmissionRoute
   '/admin/analysis': typeof AdminAnalysisRoute
   '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/feed': typeof AdminFeedRoute
   '/admin/marksheet': typeof AdminMarksheetRoute
   '/admin/notices': typeof AdminNoticesRoute
   '/admin/phonebook': typeof AdminPhonebookRoute
@@ -192,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/admin/students': typeof AdminStudentsRoute
   '/student/analysis': typeof StudentAnalysisRoute
   '/student/attendance': typeof StudentAttendanceRoute
+  '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
@@ -209,6 +223,7 @@ export interface FileRoutesByTo {
   '/admin/admission': typeof AdminAdmissionRoute
   '/admin/analysis': typeof AdminAnalysisRoute
   '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/feed': typeof AdminFeedRoute
   '/admin/marksheet': typeof AdminMarksheetRoute
   '/admin/notices': typeof AdminNoticesRoute
   '/admin/phonebook': typeof AdminPhonebookRoute
@@ -218,6 +233,7 @@ export interface FileRoutesByTo {
   '/admin/students': typeof AdminStudentsRoute
   '/student/analysis': typeof StudentAnalysisRoute
   '/student/attendance': typeof StudentAttendanceRoute
+  '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
@@ -238,6 +254,7 @@ export interface FileRoutesById {
   '/admin/admission': typeof AdminAdmissionRoute
   '/admin/analysis': typeof AdminAnalysisRoute
   '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/feed': typeof AdminFeedRoute
   '/admin/marksheet': typeof AdminMarksheetRoute
   '/admin/notices': typeof AdminNoticesRoute
   '/admin/phonebook': typeof AdminPhonebookRoute
@@ -248,6 +265,7 @@ export interface FileRoutesById {
   '/admin/students': typeof AdminStudentsRoute
   '/student/analysis': typeof StudentAnalysisRoute
   '/student/attendance': typeof StudentAttendanceRoute
+  '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
@@ -269,6 +287,7 @@ export interface FileRouteTypes {
     | '/admin/admission'
     | '/admin/analysis'
     | '/admin/attendance'
+    | '/admin/feed'
     | '/admin/marksheet'
     | '/admin/notices'
     | '/admin/phonebook'
@@ -279,6 +298,7 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/student/analysis'
     | '/student/attendance'
+    | '/student/dashboard'
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
@@ -296,6 +316,7 @@ export interface FileRouteTypes {
     | '/admin/admission'
     | '/admin/analysis'
     | '/admin/attendance'
+    | '/admin/feed'
     | '/admin/marksheet'
     | '/admin/notices'
     | '/admin/phonebook'
@@ -305,6 +326,7 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/student/analysis'
     | '/student/attendance'
+    | '/student/dashboard'
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
@@ -324,6 +346,7 @@ export interface FileRouteTypes {
     | '/admin/admission'
     | '/admin/analysis'
     | '/admin/attendance'
+    | '/admin/feed'
     | '/admin/marksheet'
     | '/admin/notices'
     | '/admin/phonebook'
@@ -334,6 +357,7 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/student/analysis'
     | '/student/attendance'
+    | '/student/dashboard'
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
@@ -431,6 +455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentExamRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/student/dashboard': {
+      id: '/student/dashboard'
+      path: '/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof StudentDashboardRouteImport
+      parentRoute: typeof StudentRoute
+    }
     '/student/attendance': {
       id: '/student/attendance'
       path: '/attendance'
@@ -501,6 +532,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMarksheetRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/feed': {
+      id: '/admin/feed'
+      path: '/feed'
+      fullPath: '/admin/feed'
+      preLoaderRoute: typeof AdminFeedRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/attendance': {
       id: '/admin/attendance'
       path: '/attendance'
@@ -565,6 +603,7 @@ interface AdminRouteChildren {
   AdminAdmissionRoute: typeof AdminAdmissionRoute
   AdminAnalysisRoute: typeof AdminAnalysisRoute
   AdminAttendanceRoute: typeof AdminAttendanceRoute
+  AdminFeedRoute: typeof AdminFeedRoute
   AdminMarksheetRoute: typeof AdminMarksheetRoute
   AdminNoticesRoute: typeof AdminNoticesRoute
   AdminPhonebookRoute: typeof AdminPhonebookRoute
@@ -581,6 +620,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAdmissionRoute: AdminAdmissionRoute,
   AdminAnalysisRoute: AdminAnalysisRoute,
   AdminAttendanceRoute: AdminAttendanceRoute,
+  AdminFeedRoute: AdminFeedRoute,
   AdminMarksheetRoute: AdminMarksheetRoute,
   AdminNoticesRoute: AdminNoticesRoute,
   AdminPhonebookRoute: AdminPhonebookRoute,
@@ -597,6 +637,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface StudentRouteChildren {
   StudentAnalysisRoute: typeof StudentAnalysisRoute
   StudentAttendanceRoute: typeof StudentAttendanceRoute
+  StudentDashboardRoute: typeof StudentDashboardRoute
   StudentExamRoute: typeof StudentExamRoute
   StudentNoticesRoute: typeof StudentNoticesRoute
   StudentPdfsRoute: typeof StudentPdfsRoute
@@ -608,6 +649,7 @@ interface StudentRouteChildren {
 const StudentRouteChildren: StudentRouteChildren = {
   StudentAnalysisRoute: StudentAnalysisRoute,
   StudentAttendanceRoute: StudentAttendanceRoute,
+  StudentDashboardRoute: StudentDashboardRoute,
   StudentExamRoute: StudentExamRoute,
   StudentNoticesRoute: StudentNoticesRoute,
   StudentPdfsRoute: StudentPdfsRoute,
