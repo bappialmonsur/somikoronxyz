@@ -9,7 +9,7 @@ import {
   SidebarHeader, SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
-  Home, Bell, CalendarCheck, GraduationCap, BarChart3, FileText, LogOut, Loader2, ShieldAlert, BookOpenCheck,
+  Home, Bell, CalendarCheck, GraduationCap, BarChart3, FileText, LogOut, Loader2, ShieldAlert, BookOpenCheck, UserRound,
 } from "lucide-react";
 import { bnClass } from "@/lib/grading";
 
@@ -32,6 +32,7 @@ const menu = [
   { title: "রেজাল্ট", url: "/student/results", icon: GraduationCap },
   { title: "রেজাল্ট এনালাইসিস", url: "/student/analysis", icon: BarChart3 },
   { title: "পিডিএফ নোটস", url: "/student/pdfs", icon: FileText },
+  { title: "আমার প্রোফাইল", url: "/student/profile", icon: UserRound },
 ];
 
 function StudentLayout() {

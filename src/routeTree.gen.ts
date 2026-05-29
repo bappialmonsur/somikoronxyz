@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentIndexRouteImport } from './routes/student.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as StudentResultsRouteImport } from './routes/student.results'
+import { Route as StudentProfileRouteImport } from './routes/student.profile'
 import { Route as StudentPdfsRouteImport } from './routes/student.pdfs'
 import { Route as StudentNoticesRouteImport } from './routes/student.notices'
 import { Route as StudentExamRouteImport } from './routes/student.exam'
@@ -69,6 +70,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const StudentResultsRoute = StudentResultsRouteImport.update({
   id: '/results',
   path: '/results',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => StudentRoute,
 } as any)
 const StudentPdfsRoute = StudentPdfsRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
+  '/student/profile': typeof StudentProfileRoute
   '/student/results': typeof StudentResultsRoute
   '/admin/': typeof AdminIndexRoute
   '/student/': typeof StudentIndexRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
+  '/student/profile': typeof StudentProfileRoute
   '/student/results': typeof StudentResultsRoute
   '/admin': typeof AdminIndexRoute
   '/student': typeof StudentIndexRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
+  '/student/profile': typeof StudentProfileRoute
   '/student/results': typeof StudentResultsRoute
   '/admin/': typeof AdminIndexRoute
   '/student/': typeof StudentIndexRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
+    | '/student/profile'
     | '/student/results'
     | '/admin/'
     | '/student/'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
+    | '/student/profile'
     | '/student/results'
     | '/admin'
     | '/student'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
+    | '/student/profile'
     | '/student/results'
     | '/admin/'
     | '/student/'
@@ -389,6 +401,13 @@ declare module '@tanstack/react-router' {
       path: '/results'
       fullPath: '/student/results'
       preLoaderRoute: typeof StudentResultsRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
       parentRoute: typeof StudentRoute
     }
     '/student/pdfs': {
@@ -581,6 +600,7 @@ interface StudentRouteChildren {
   StudentExamRoute: typeof StudentExamRoute
   StudentNoticesRoute: typeof StudentNoticesRoute
   StudentPdfsRoute: typeof StudentPdfsRoute
+  StudentProfileRoute: typeof StudentProfileRoute
   StudentResultsRoute: typeof StudentResultsRoute
   StudentIndexRoute: typeof StudentIndexRoute
 }
@@ -591,6 +611,7 @@ const StudentRouteChildren: StudentRouteChildren = {
   StudentExamRoute: StudentExamRoute,
   StudentNoticesRoute: StudentNoticesRoute,
   StudentPdfsRoute: StudentPdfsRoute,
+  StudentProfileRoute: StudentProfileRoute,
   StudentResultsRoute: StudentResultsRoute,
   StudentIndexRoute: StudentIndexRoute,
 }
