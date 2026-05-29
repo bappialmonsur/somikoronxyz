@@ -1,6 +1,8 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useSession } from "@/hooks/use-auth";
 import { useMyAccess, type TeacherFeature } from "@/hooks/use-access";
+import { useAdminNotifications, requestPushPermission, type AdminCounts } from "@/hooks/use-admin-notifications";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
@@ -57,11 +59,14 @@ type MenuItem = {
   icon: typeof LayoutDashboard;
   exact?: boolean;
   feature?: TeacherFeature;
+  badge?: "pending" | "messages";
 };
 
 const menu: MenuItem[] = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, exact: true },
-  { title: "নিউজফিড পোস্ট", url: "/admin/feed", icon: Newspaper, feature: "newsfeed" },
+  { title: "নিউজফিড", url: "/admin/newsfeed", icon: Newspaper, feature: "newsfeed", exact: true },
+  { title: "নিউজফিড পোস্ট", url: "/admin/feed", icon: Newspaper, feature: "newsfeed", badge: "pending" },
+  { title: "মেসেজ", url: "/admin/messages", icon: MessageSquare, badge: "messages" },
   { title: "ছাত্রছাত্রী ভর্তি", url: "/admin/admission", icon: UserPlus, feature: "admission" },
   { title: "সকল শিক্ষার্থী", url: "/admin/students", icon: Users, feature: "admission" },
   { title: "ফোনবুক", url: "/admin/phonebook", icon: BookUser, feature: "admission" },
@@ -83,6 +88,9 @@ function AdminLayout() {
   const { user, loading } = useSession();
   const { data: access, isLoading: accessLoading } = useMyAccess(user);
   const path = useRouterState({ select: (r) => r.location.pathname });
+  const isAdminUser = !!access?.isAdmin;
+  const { data: counts } = useAdminNotifications(user, isAdminUser);
+  useEffect(() => { if (isAdminUser) requestPushPermission(); }, [isAdminUser]);
 
   if (loading || (user && accessLoading)) {
     return (
@@ -133,7 +141,7 @@ function AdminLayout() {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-academy-soft" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
-        <PanelSidebar items={visibleMenu} subtitle={isAdmin ? "শিক্ষা পরিবার" : "শিক্ষক"} onLogout={onLogout} />
+        <PanelSidebar items={visibleMenu} subtitle={isAdmin ? "শিক্ষা পরিবার" : "শিক্ষক"} onLogout={onLogout} counts={counts} />
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 bg-white border-b border-academy-navy/10 flex items-center px-4 gap-2 sticky top-0 z-10">
             <SidebarTrigger />
@@ -165,10 +173,15 @@ function AdminLayout() {
 }
 
 
-function PanelSidebar({ items, subtitle, onLogout }: { items: MenuItem[]; subtitle: string; onLogout: () => void }) {
+function PanelSidebar({ items, subtitle, onLogout, counts }: { items: MenuItem[]; subtitle: string; onLogout: () => void; counts?: AdminCounts }) {
   const path = useRouterState({ select: (r) => r.location.pathname });
   const isActive = (url: string, exact?: boolean) =>
     exact ? path === url : path === url || path.startsWith(url + "/");
+
+  const badgeCount = (b?: "pending" | "messages") => {
+    if (!b || !counts) return 0;
+    return b === "pending" ? counts.pendingPosts : counts.unreadMessages;
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -186,16 +199,24 @@ function PanelSidebar({ items, subtitle, onLogout }: { items: MenuItem[]; subtit
           <SidebarGroupLabel>মেনু</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url, item.exact)}>
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                const bc = badgeCount(item.badge);
+                return (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url, item.exact)}>
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span className="flex-1">{item.title}</span>
+                        {bc > 0 && (
+                          <span className="text-[10px] font-bold text-white bg-red-500 rounded-full px-1.5 py-0.5 min-w-5 text-center leading-none">
+                            {bc}
+                          </span>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

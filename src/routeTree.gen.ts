@@ -19,6 +19,7 @@ import { Route as StudentResultsRouteImport } from './routes/student.results'
 import { Route as StudentProfileRouteImport } from './routes/student.profile'
 import { Route as StudentPdfsRouteImport } from './routes/student.pdfs'
 import { Route as StudentNoticesRouteImport } from './routes/student.notices'
+import { Route as StudentMessagesRouteImport } from './routes/student.messages'
 import { Route as StudentExamRouteImport } from './routes/student.exam'
 import { Route as StudentDashboardRouteImport } from './routes/student.dashboard'
 import { Route as StudentAttendanceRouteImport } from './routes/student.attendance'
@@ -32,6 +33,8 @@ import { Route as AdminResultsRouteImport } from './routes/admin.results'
 import { Route as AdminQuestionBankRouteImport } from './routes/admin.question-bank'
 import { Route as AdminPhonebookRouteImport } from './routes/admin.phonebook'
 import { Route as AdminNoticesRouteImport } from './routes/admin.notices'
+import { Route as AdminNewsfeedRouteImport } from './routes/admin.newsfeed'
+import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminMarksheetRouteImport } from './routes/admin.marksheet'
 import { Route as AdminFeedRouteImport } from './routes/admin.feed'
 import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
@@ -89,6 +92,11 @@ const StudentPdfsRoute = StudentPdfsRouteImport.update({
 const StudentNoticesRoute = StudentNoticesRouteImport.update({
   id: '/notices',
   path: '/notices',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentMessagesRoute = StudentMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => StudentRoute,
 } as any)
 const StudentExamRoute = StudentExamRouteImport.update({
@@ -156,6 +164,16 @@ const AdminNoticesRoute = AdminNoticesRouteImport.update({
   path: '/notices',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminNewsfeedRoute = AdminNewsfeedRouteImport.update({
+  id: '/newsfeed',
+  path: '/newsfeed',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMessagesRoute = AdminMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMarksheetRoute = AdminMarksheetRouteImport.update({
   id: '/marksheet',
   path: '/marksheet',
@@ -208,6 +226,8 @@ export interface FileRoutesByFullPath {
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/feed': typeof AdminFeedRoute
   '/admin/marksheet': typeof AdminMarksheetRoute
+  '/admin/messages': typeof AdminMessagesRoute
+  '/admin/newsfeed': typeof AdminNewsfeedRoute
   '/admin/notices': typeof AdminNoticesRoute
   '/admin/phonebook': typeof AdminPhonebookRoute
   '/admin/question-bank': typeof AdminQuestionBankRoute
@@ -221,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/student/attendance': typeof StudentAttendanceRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
+  '/student/messages': typeof StudentMessagesRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
   '/student/profile': typeof StudentProfileRoute
@@ -239,6 +260,8 @@ export interface FileRoutesByTo {
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/feed': typeof AdminFeedRoute
   '/admin/marksheet': typeof AdminMarksheetRoute
+  '/admin/messages': typeof AdminMessagesRoute
+  '/admin/newsfeed': typeof AdminNewsfeedRoute
   '/admin/notices': typeof AdminNoticesRoute
   '/admin/phonebook': typeof AdminPhonebookRoute
   '/admin/question-bank': typeof AdminQuestionBankRoute
@@ -251,6 +274,7 @@ export interface FileRoutesByTo {
   '/student/attendance': typeof StudentAttendanceRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
+  '/student/messages': typeof StudentMessagesRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
   '/student/profile': typeof StudentProfileRoute
@@ -272,6 +296,8 @@ export interface FileRoutesById {
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/feed': typeof AdminFeedRoute
   '/admin/marksheet': typeof AdminMarksheetRoute
+  '/admin/messages': typeof AdminMessagesRoute
+  '/admin/newsfeed': typeof AdminNewsfeedRoute
   '/admin/notices': typeof AdminNoticesRoute
   '/admin/phonebook': typeof AdminPhonebookRoute
   '/admin/question-bank': typeof AdminQuestionBankRoute
@@ -285,6 +311,7 @@ export interface FileRoutesById {
   '/student/attendance': typeof StudentAttendanceRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
+  '/student/messages': typeof StudentMessagesRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
   '/student/profile': typeof StudentProfileRoute
@@ -307,6 +334,8 @@ export interface FileRouteTypes {
     | '/admin/attendance'
     | '/admin/feed'
     | '/admin/marksheet'
+    | '/admin/messages'
+    | '/admin/newsfeed'
     | '/admin/notices'
     | '/admin/phonebook'
     | '/admin/question-bank'
@@ -320,6 +349,7 @@ export interface FileRouteTypes {
     | '/student/attendance'
     | '/student/dashboard'
     | '/student/exam'
+    | '/student/messages'
     | '/student/notices'
     | '/student/pdfs'
     | '/student/profile'
@@ -338,6 +368,8 @@ export interface FileRouteTypes {
     | '/admin/attendance'
     | '/admin/feed'
     | '/admin/marksheet'
+    | '/admin/messages'
+    | '/admin/newsfeed'
     | '/admin/notices'
     | '/admin/phonebook'
     | '/admin/question-bank'
@@ -350,6 +382,7 @@ export interface FileRouteTypes {
     | '/student/attendance'
     | '/student/dashboard'
     | '/student/exam'
+    | '/student/messages'
     | '/student/notices'
     | '/student/pdfs'
     | '/student/profile'
@@ -370,6 +403,8 @@ export interface FileRouteTypes {
     | '/admin/attendance'
     | '/admin/feed'
     | '/admin/marksheet'
+    | '/admin/messages'
+    | '/admin/newsfeed'
     | '/admin/notices'
     | '/admin/phonebook'
     | '/admin/question-bank'
@@ -383,6 +418,7 @@ export interface FileRouteTypes {
     | '/student/attendance'
     | '/student/dashboard'
     | '/student/exam'
+    | '/student/messages'
     | '/student/notices'
     | '/student/pdfs'
     | '/student/profile'
@@ -470,6 +506,13 @@ declare module '@tanstack/react-router' {
       path: '/notices'
       fullPath: '/student/notices'
       preLoaderRoute: typeof StudentNoticesRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/messages': {
+      id: '/student/messages'
+      path: '/messages'
+      fullPath: '/student/messages'
+      preLoaderRoute: typeof StudentMessagesRouteImport
       parentRoute: typeof StudentRoute
     }
     '/student/exam': {
@@ -563,6 +606,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNoticesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/newsfeed': {
+      id: '/admin/newsfeed'
+      path: '/newsfeed'
+      fullPath: '/admin/newsfeed'
+      preLoaderRoute: typeof AdminNewsfeedRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/messages': {
+      id: '/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AdminMessagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/marksheet': {
       id: '/admin/marksheet'
       path: '/marksheet'
@@ -643,6 +700,8 @@ interface AdminRouteChildren {
   AdminAttendanceRoute: typeof AdminAttendanceRoute
   AdminFeedRoute: typeof AdminFeedRoute
   AdminMarksheetRoute: typeof AdminMarksheetRoute
+  AdminMessagesRoute: typeof AdminMessagesRoute
+  AdminNewsfeedRoute: typeof AdminNewsfeedRoute
   AdminNoticesRoute: typeof AdminNoticesRoute
   AdminPhonebookRoute: typeof AdminPhonebookRoute
   AdminQuestionBankRoute: typeof AdminQuestionBankRoute
@@ -662,6 +721,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAttendanceRoute: AdminAttendanceRoute,
   AdminFeedRoute: AdminFeedRoute,
   AdminMarksheetRoute: AdminMarksheetRoute,
+  AdminMessagesRoute: AdminMessagesRoute,
+  AdminNewsfeedRoute: AdminNewsfeedRoute,
   AdminNoticesRoute: AdminNoticesRoute,
   AdminPhonebookRoute: AdminPhonebookRoute,
   AdminQuestionBankRoute: AdminQuestionBankRoute,
@@ -681,6 +742,7 @@ interface StudentRouteChildren {
   StudentAttendanceRoute: typeof StudentAttendanceRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   StudentExamRoute: typeof StudentExamRoute
+  StudentMessagesRoute: typeof StudentMessagesRoute
   StudentNoticesRoute: typeof StudentNoticesRoute
   StudentPdfsRoute: typeof StudentPdfsRoute
   StudentProfileRoute: typeof StudentProfileRoute
@@ -693,6 +755,7 @@ const StudentRouteChildren: StudentRouteChildren = {
   StudentAttendanceRoute: StudentAttendanceRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   StudentExamRoute: StudentExamRoute,
+  StudentMessagesRoute: StudentMessagesRoute,
   StudentNoticesRoute: StudentNoticesRoute,
   StudentPdfsRoute: StudentPdfsRoute,
   StudentProfileRoute: StudentProfileRoute,
