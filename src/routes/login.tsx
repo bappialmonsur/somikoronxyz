@@ -57,27 +57,31 @@ function LoginPage() {
     setBusy(true);
     const syntheticEmail = `${phoneE164.replace(/\D/g, "")}@somikoron.local`;
     try {
-      if (mode === "bootstrap") {
+      if (mode === "bootstrap" || mode === "teacher") {
         if (fullName.trim().length < 2) {
           toast.error("পুরো নাম দিন");
           setBusy(false);
           return;
         }
-        await callBootstrap({ data: { phone: phoneE164, password, full_name: fullName } });
+        if (mode === "bootstrap") {
+          await callBootstrap({ data: { phone: phoneE164, password, full_name: fullName } });
+        } else {
+          await callTeacherSignup({ data: { phone: phoneE164, password, full_name: fullName } });
+        }
         const { error } = await supabase.auth.signInWithPassword({ email: syntheticEmail, password });
         if (error) throw error;
-        toast.success("এডমিন একাউন্ট তৈরি হয়েছে!");
+        toast.success(mode === "bootstrap" ? "এডমিন একাউন্ট তৈরি হয়েছে!" : "শিক্ষক একাউন্ট তৈরি হয়েছে!");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: syntheticEmail, password });
         if (error) throw error;
         toast.success("সফলভাবে লগইন হয়েছেন");
       }
-      // Route by role
+      // Route by role: admin/teacher -> panel, otherwise student
       const { data: { user } } = await supabase.auth.getUser();
       let dest: "/admin" | "/student" = "/student";
       if (user) {
-        const { data: roleRow } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-        if (roleRow) dest = "/admin";
+        const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+        if ((roleRows ?? []).some((r) => r.role === "admin" || (r.role as string) === "teacher")) dest = "/admin";
       }
       navigate({ to: dest });
     } catch (err: any) {
