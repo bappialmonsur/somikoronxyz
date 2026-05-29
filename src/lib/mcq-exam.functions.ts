@@ -3,6 +3,18 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+// Throws unless the given user has the admin role. Uses supabaseAdmin so the
+// check cannot be bypassed even though writes below also use supabaseAdmin.
+async function assertAdmin(userId: string) {
+  const { data: isAdminRow } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (!isAdminRow) throw new Error("শুধু অ্যাডমিন এই কাজ করতে পারে");
+}
+
 export type McqQuestion = {
   question: string;
   options: string[];
