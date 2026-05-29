@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Loader2, ShieldCheck, Phone } from "lucide-react";
 import { normalizeBdPhone } from "@/lib/phone";
 import { bootstrapAdminAccount, checkAdminExists } from "@/lib/admin.functions";
+import { teacherSignup } from "@/lib/teacher.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "bootstrap">("login");
+  const [mode, setMode] = useState<"login" | "bootstrap" | "teacher">("login");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -33,6 +34,7 @@ function LoginPage() {
 
   const callBootstrap = useServerFn(bootstrapAdminAccount);
   const callCheckAdmin = useServerFn(checkAdminExists);
+  const callTeacherSignup = useServerFn(teacherSignup);
 
   useEffect(() => {
     callCheckAdmin()
@@ -55,27 +57,31 @@ function LoginPage() {
     setBusy(true);
     const syntheticEmail = `${phoneE164.replace(/\D/g, "")}@somikoron.local`;
     try {
-      if (mode === "bootstrap") {
+      if (mode === "bootstrap" || mode === "teacher") {
         if (fullName.trim().length < 2) {
           toast.error("পুরো নাম দিন");
           setBusy(false);
           return;
         }
-        await callBootstrap({ data: { phone: phoneE164, password, full_name: fullName } });
+        if (mode === "bootstrap") {
+          await callBootstrap({ data: { phone: phoneE164, password, full_name: fullName } });
+        } else {
+          await callTeacherSignup({ data: { phone: phoneE164, password, full_name: fullName } });
+        }
         const { error } = await supabase.auth.signInWithPassword({ email: syntheticEmail, password });
         if (error) throw error;
-        toast.success("এডমিন একাউন্ট তৈরি হয়েছে!");
+        toast.success(mode === "bootstrap" ? "এডমিন একাউন্ট তৈরি হয়েছে!" : "শিক্ষক একাউন্ট তৈরি হয়েছে!");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: syntheticEmail, password });
         if (error) throw error;
         toast.success("সফলভাবে লগইন হয়েছেন");
       }
-      // Route by role
+      // Route by role: admin/teacher -> panel, otherwise student
       const { data: { user } } = await supabase.auth.getUser();
       let dest: "/admin" | "/student" = "/student";
       if (user) {
-        const { data: roleRow } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-        if (roleRow) dest = "/admin";
+        const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+        if ((roleRows ?? []).some((r) => r.role === "admin" || (r.role as string) === "teacher")) dest = "/admin";
       }
       navigate({ to: dest });
     } catch (err: any) {
@@ -100,7 +106,7 @@ function LoginPage() {
         </Link>
 
         {adminExists === false ? (
-          <Tabs value={mode} onValueChange={(v) => setMode(v as any)}>
+          <Tabs value={mode === "teacher" ? "login" : mode} onValueChange={(v) => setMode(v as any)}>
             <TabsList className="grid grid-cols-2 w-full mb-6">
               <TabsTrigger value="login">লগইন</TabsTrigger>
               <TabsTrigger value="bootstrap">প্রথম এডমিন তৈরি</TabsTrigger>
@@ -108,13 +114,25 @@ function LoginPage() {
             <FormBody {...{ mode, phone, setPhone, password, setPassword, fullName, setFullName, busy, handleSubmit }} />
           </Tabs>
         ) : (
-          <FormBody {...{ mode: "login", phone, setPhone, password, setPassword, fullName, setFullName, busy, handleSubmit }} />
+          <FormBody {...{ mode: mode === "bootstrap" ? "login" : mode, phone, setPhone, password, setPassword, fullName, setFullName, busy, handleSubmit }} />
         )}
+
+        <div className="mt-4 text-center text-sm">
+          {mode === "teacher" ? (
+            <button type="button" onClick={() => setMode("login")} className="text-academy-navy underline">
+              লগইনে ফিরে যান
+            </button>
+          ) : (
+            <button type="button" onClick={() => setMode("teacher")} className="text-academy-navy underline">
+              শিক্ষক? নতুন একাউন্ট তৈরি করুন
+            </button>
+          )}
+        </div>
 
         <div className="mt-6 p-3 bg-academy-soft rounded-lg flex gap-2 text-xs text-muted-foreground">
           <ShieldCheck className="size-4 text-academy-gold shrink-0 mt-0.5" />
           <p>
-            শিক্ষার্থী: ভর্তি ফরমে দেওয়া ফোন নম্বর ও এডমিন কর্তৃক সেট করা পাসওয়ার্ড দিয়ে লগইন করুন।
+            শিক্ষার্থী: ভর্তি ফরমে দেওয়া ফোন নম্বর ও এডমিন কর্তৃক সেট করা পাসওয়ার্ড দিয়ে লগইন করুন। শিক্ষক একাউন্ট তৈরির পর এডমিন অনুমতি দিলে ফিচার দেখা যাবে।
           </p>
         </div>
       </div>
@@ -123,7 +141,7 @@ function LoginPage() {
 }
 
 function FormBody(props: {
-  mode: "login" | "bootstrap";
+  mode: "login" | "bootstrap" | "teacher";
   phone: string; setPhone: (v: string) => void;
   password: string; setPassword: (v: string) => void;
   fullName: string; setFullName: (v: string) => void;
@@ -131,9 +149,10 @@ function FormBody(props: {
   handleSubmit: (e: FormEvent) => void;
 }) {
   const { mode, phone, setPhone, password, setPassword, fullName, setFullName, busy, handleSubmit } = props;
+  const isSignup = mode === "bootstrap" || mode === "teacher";
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {mode === "bootstrap" && (
+      {isSignup && (
         <div className="space-y-2">
           <Label htmlFor="name">পুরো নাম</Label>
           <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="আপনার নাম" />
@@ -160,7 +179,7 @@ function FormBody(props: {
       </div>
       <Button type="submit" disabled={busy} className="w-full bg-academy-navy hover:bg-academy-navy/90 text-white">
         {busy && <Loader2 className="animate-spin" />}
-        {mode === "bootstrap" ? "এডমিন একাউন্ট তৈরি করুন" : "লগইন করুন"}
+        {mode === "bootstrap" ? "এডমিন একাউন্ট তৈরি করুন" : mode === "teacher" ? "শিক্ষক একাউন্ট তৈরি করুন" : "লগইন করুন"}
       </Button>
     </form>
   );

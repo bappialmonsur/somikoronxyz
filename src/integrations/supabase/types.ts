@@ -481,6 +481,27 @@ export type Database = {
         }
         Relationships: []
       }
+      teacher_permissions: {
+        Row: {
+          created_at: string
+          feature: Database["public"]["Enums"]["teacher_feature"]
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature: Database["public"]["Enums"]["teacher_feature"]
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature?: Database["public"]["Enums"]["teacher_feature"]
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -514,9 +535,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_teacher_permission: {
+        Args: {
+          _feature: Database["public"]["Enums"]["teacher_feature"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      app_role: "admin" | "student"
+      app_role: "admin" | "student" | "teacher"
       attendance_status: "present" | "absent"
       batch_time: "morning" | "afternoon" | "evening"
       class_level: "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12"
@@ -524,6 +552,7 @@ export type Database = {
       exam_pattern: "written" | "mcq"
       exam_type: "daily" | "weekly" | "model_test"
       feed_media_type: "text" | "image" | "video" | "audio"
+      teacher_feature: "attendance" | "results" | "newsfeed" | "admission"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -651,7 +680,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "student"],
+      app_role: ["admin", "student", "teacher"],
       attendance_status: ["present", "absent"],
       batch_time: ["morning", "afternoon", "evening"],
       class_level: ["5", "6", "7", "8", "9", "10", "11", "12"],
@@ -659,6 +688,7 @@ export const Constants = {
       exam_pattern: ["written", "mcq"],
       exam_type: ["daily", "weekly", "model_test"],
       feed_media_type: ["text", "image", "video", "audio"],
+      teacher_feature: ["attendance", "results", "newsfeed", "admission"],
     },
   },
 } as const
