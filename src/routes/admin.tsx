@@ -163,7 +163,7 @@ function AdminLayout() {
 }
 
 
-function AdminSidebar({ onLogout }: { onLogout: () => void }) {
+function PanelSidebar({ items, subtitle, onLogout }: { items: MenuItem[]; subtitle: string; onLogout: () => void }) {
   const path = useRouterState({ select: (r) => r.location.pathname });
   const isActive = (url: string, exact?: boolean) =>
     exact ? path === url : path === url || path.startsWith(url + "/");
@@ -175,7 +175,7 @@ function AdminSidebar({ onLogout }: { onLogout: () => void }) {
           <div className="size-9 rounded-lg bg-academy-gold text-academy-navy flex items-center justify-center font-bold shrink-0">স</div>
           <div className="text-sm leading-tight overflow-hidden">
             <div className="font-bold text-sidebar-foreground truncate">সমীকরণ</div>
-            <div className="text-xs text-sidebar-foreground/70 truncate">শিক্ষা পরিবার</div>
+            <div className="text-xs text-sidebar-foreground/70 truncate">{subtitle}</div>
           </div>
         </div>
       </SidebarHeader>
@@ -184,7 +184,7 @@ function AdminSidebar({ onLogout }: { onLogout: () => void }) {
           <SidebarGroupLabel>মেনু</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menu.map((item) => (
+              {items.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild isActive={isActive(item.url, item.exact)}>
                     <Link to={item.url}>
