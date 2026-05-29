@@ -180,6 +180,7 @@ export const aiGenerateQuestions = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => aiBatchSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { userId } = context;
+    await assertAdmin(userId);
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("AI কনফিগারেশন পাওয়া যায়নি");
 
