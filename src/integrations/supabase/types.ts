@@ -178,6 +178,39 @@ export type Database = {
         }
         Relationships: []
       }
+      feed_posts: {
+        Row: {
+          body: string | null
+          class_level: Database["public"]["Enums"]["class_level"] | null
+          created_at: string
+          id: string
+          is_active: boolean
+          media_path: string | null
+          media_type: Database["public"]["Enums"]["feed_media_type"]
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          class_level?: Database["public"]["Enums"]["class_level"] | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          media_path?: string | null
+          media_type?: Database["public"]["Enums"]["feed_media_type"]
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          class_level?: Database["public"]["Enums"]["class_level"] | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          media_path?: string | null
+          media_type?: Database["public"]["Enums"]["feed_media_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           caption: string | null
@@ -490,6 +523,7 @@ export type Database = {
       department_type: "science" | "business" | "none"
       exam_pattern: "written" | "mcq"
       exam_type: "daily" | "weekly" | "model_test"
+      feed_media_type: "text" | "image" | "video" | "audio"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -624,6 +658,7 @@ export const Constants = {
       department_type: ["science", "business", "none"],
       exam_pattern: ["written", "mcq"],
       exam_type: ["daily", "weekly", "model_test"],
+      feed_media_type: ["text", "image", "video", "audio"],
     },
   },
 } as const
