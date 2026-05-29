@@ -179,7 +179,7 @@ function FormBody(props: {
       </div>
       <Button type="submit" disabled={busy} className="w-full bg-academy-navy hover:bg-academy-navy/90 text-white">
         {busy && <Loader2 className="animate-spin" />}
-        {mode === "bootstrap" ? "এডমিন একাউন্ট তৈরি করুন" : "লগইন করুন"}
+        {mode === "bootstrap" ? "এডমিন একাউন্ট তৈরি করুন" : mode === "teacher" ? "শিক্ষক একাউন্ট তৈরি করুন" : "লগইন করুন"}
       </Button>
     </form>
   );
