@@ -20,6 +20,7 @@ import { Route as StudentProfileRouteImport } from './routes/student.profile'
 import { Route as StudentPdfsRouteImport } from './routes/student.pdfs'
 import { Route as StudentNoticesRouteImport } from './routes/student.notices'
 import { Route as StudentExamRouteImport } from './routes/student.exam'
+import { Route as StudentDashboardRouteImport } from './routes/student.dashboard'
 import { Route as StudentAttendanceRouteImport } from './routes/student.attendance'
 import { Route as StudentAnalysisRouteImport } from './routes/student.analysis'
 import { Route as AdminStudentsRouteImport } from './routes/admin.students'
@@ -90,6 +91,11 @@ const StudentNoticesRoute = StudentNoticesRouteImport.update({
 const StudentExamRoute = StudentExamRouteImport.update({
   id: '/exam',
   path: '/exam',
+  getParentRoute: () => StudentRoute,
+} as any)
+const StudentDashboardRoute = StudentDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => StudentRoute,
 } as any)
 const StudentAttendanceRoute = StudentAttendanceRouteImport.update({
@@ -192,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/admin/students': typeof AdminStudentsRoute
   '/student/analysis': typeof StudentAnalysisRoute
   '/student/attendance': typeof StudentAttendanceRoute
+  '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/admin/students': typeof AdminStudentsRoute
   '/student/analysis': typeof StudentAnalysisRoute
   '/student/attendance': typeof StudentAttendanceRoute
+  '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/admin/students': typeof AdminStudentsRoute
   '/student/analysis': typeof StudentAnalysisRoute
   '/student/attendance': typeof StudentAttendanceRoute
+  '/student/dashboard': typeof StudentDashboardRoute
   '/student/exam': typeof StudentExamRoute
   '/student/notices': typeof StudentNoticesRoute
   '/student/pdfs': typeof StudentPdfsRoute
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/student/analysis'
     | '/student/attendance'
+    | '/student/dashboard'
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/student/analysis'
     | '/student/attendance'
+    | '/student/dashboard'
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/student/analysis'
     | '/student/attendance'
+    | '/student/dashboard'
     | '/student/exam'
     | '/student/notices'
     | '/student/pdfs'
@@ -429,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/exam'
       fullPath: '/student/exam'
       preLoaderRoute: typeof StudentExamRouteImport
+      parentRoute: typeof StudentRoute
+    }
+    '/student/dashboard': {
+      id: '/student/dashboard'
+      path: '/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof StudentDashboardRouteImport
       parentRoute: typeof StudentRoute
     }
     '/student/attendance': {
@@ -597,6 +616,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface StudentRouteChildren {
   StudentAnalysisRoute: typeof StudentAnalysisRoute
   StudentAttendanceRoute: typeof StudentAttendanceRoute
+  StudentDashboardRoute: typeof StudentDashboardRoute
   StudentExamRoute: typeof StudentExamRoute
   StudentNoticesRoute: typeof StudentNoticesRoute
   StudentPdfsRoute: typeof StudentPdfsRoute
@@ -608,6 +628,7 @@ interface StudentRouteChildren {
 const StudentRouteChildren: StudentRouteChildren = {
   StudentAnalysisRoute: StudentAnalysisRoute,
   StudentAttendanceRoute: StudentAttendanceRoute,
+  StudentDashboardRoute: StudentDashboardRoute,
   StudentExamRoute: StudentExamRoute,
   StudentNoticesRoute: StudentNoticesRoute,
   StudentPdfsRoute: StudentPdfsRoute,
@@ -628,3 +649,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
