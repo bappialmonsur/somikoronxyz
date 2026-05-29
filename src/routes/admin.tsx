@@ -173,10 +173,15 @@ function AdminLayout() {
 }
 
 
-function PanelSidebar({ items, subtitle, onLogout }: { items: MenuItem[]; subtitle: string; onLogout: () => void }) {
+function PanelSidebar({ items, subtitle, onLogout, counts }: { items: MenuItem[]; subtitle: string; onLogout: () => void; counts?: AdminCounts }) {
   const path = useRouterState({ select: (r) => r.location.pathname });
   const isActive = (url: string, exact?: boolean) =>
     exact ? path === url : path === url || path.startsWith(url + "/");
+
+  const badgeCount = (b?: "pending" | "messages") => {
+    if (!b || !counts) return 0;
+    return b === "pending" ? counts.pendingPosts : counts.unreadMessages;
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -194,16 +199,24 @@ function PanelSidebar({ items, subtitle, onLogout }: { items: MenuItem[]; subtit
           <SidebarGroupLabel>মেনু</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url, item.exact)}>
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                const bc = badgeCount(item.badge);
+                return (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url, item.exact)}>
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span className="flex-1">{item.title}</span>
+                        {bc > 0 && (
+                          <span className="text-[10px] font-bold text-white bg-red-500 rounded-full px-1.5 py-0.5 min-w-5 text-center leading-none">
+                            {bc}
+                          </span>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
