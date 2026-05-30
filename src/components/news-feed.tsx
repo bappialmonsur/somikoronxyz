@@ -423,7 +423,18 @@ export function PostCard({ post }: { post: FeedPost }) {
             {post.class_level}
           </span>
         )}
+        {canDelete && (
+          <button
+            onClick={removePost}
+            disabled={deleting}
+            aria-label="পোস্ট মুছুন"
+            className="shrink-0 size-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+          >
+            {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+          </button>
+        )}
       </header>
+
 
       {post.body && (
         <div className="px-4 pb-3 text-[15px] text-academy-navy/90 whitespace-pre-wrap leading-relaxed">
