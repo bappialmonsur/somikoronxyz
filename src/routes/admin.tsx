@@ -43,6 +43,7 @@ import {
   UserCog,
   UserRound,
   KeyRound,
+  Youtube,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -70,6 +71,7 @@ const menu: MenuItem[] = [
   { title: "আমার প্রোফাইল", url: "/admin/profile", icon: UserRound, exact: true },
   { title: "নিউজফিড", url: "/admin/newsfeed", icon: Newspaper, feature: "newsfeed", exact: true },
   { title: "নিউজফিড পোস্ট", url: "/admin/feed", icon: Newspaper, feature: "newsfeed", badge: "pending" },
+  { title: "শিক্ষামূলক ভিডিও", url: "/admin/videos", icon: Youtube },
   { title: "মেসেজ", url: "/admin/messages", icon: MessageSquare, badge: "messages" },
   { title: "ছাত্রছাত্রী ভর্তি", url: "/admin/admission", icon: UserPlus, feature: "admission" },
   { title: "সকল শিক্ষার্থী", url: "/admin/students", icon: Users, feature: "admission" },
