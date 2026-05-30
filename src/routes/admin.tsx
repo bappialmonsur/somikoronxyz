@@ -43,6 +43,7 @@ import {
   UserCog,
   UserRound,
   KeyRound,
+  Youtube,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
