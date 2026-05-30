@@ -74,13 +74,12 @@ function VideoSourcesAdmin() {
     qc.invalidateQueries({ queryKey: ["video-sources"] });
   };
 
-  const postNow = async () => {
-    setPosting(true);
+  const doPost = async (channelId?: string) => {
     try {
       const res = await fetch("/api/public/hooks/youtube-feed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: "{}",
+        body: JSON.stringify(channelId ? { channel_id: channelId } : {}),
       });
       const json = await res.json();
       if (json.ok) {
@@ -94,8 +93,24 @@ function VideoSourcesAdmin() {
       }
     } catch (e: any) {
       toast.error(e.message ?? "পোস্ট ব্যর্থ হয়েছে");
+    }
+  };
+
+  const postNow = async () => {
+    setPosting(true);
+    try {
+      await doPost();
     } finally {
       setPosting(false);
+    }
+  };
+
+  const postFromChannel = async (channelId: string) => {
+    setPostingId(channelId);
+    try {
+      await doPost(channelId);
+    } finally {
+      setPostingId(null);
     }
   };
 
