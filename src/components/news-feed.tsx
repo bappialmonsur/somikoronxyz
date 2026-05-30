@@ -18,6 +18,7 @@ export type FeedPost = {
   media_path: string | null;
   class_level: string | null;
   created_at: string;
+  author_id?: string | null;
   author_name?: string | null;
   author_role?: string | null;
   author_meta?: string | null;
