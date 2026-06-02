@@ -51,7 +51,7 @@ function MarksEntryPage() {
       const [{ data: students, error: e1 }, { data: results, error: e2 }] = await Promise.all([
         supabase
           .from("students")
-          .select("id, full_name, roll")
+          .select("id, full_name, roll, department")
           .eq("class_level", exam!.class_level)
           .eq("is_active", true)
           .order("roll", { ascending: true }),
@@ -64,6 +64,7 @@ function MarksEntryPage() {
         student_id: s.id,
         full_name: s.full_name,
         roll: s.roll,
+        department: (s as any).department ?? "none",
         marks: marksMap.has(s.id) ? marksMap.get(s.id)! : null,
       })) as Row[];
     },
@@ -71,6 +72,17 @@ function MarksEntryPage() {
 
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [deptFilter, setDeptFilter] = useState("all");
+
+  // শ্রেণি ৯-১২ এর জন্য বিভাগ ফিল্টার দেখানো হবে
+  const showDept = ["9", "10", "11", "12"].includes(String(exam?.class_level ?? ""));
+
+  // রোস্টারে আসলে কোন কোন বিভাগ আছে
+  const availableDepts = useMemo(() => {
+    const set = new Set<string>();
+    (rows ?? []).forEach((r) => set.add(r.department));
+    return Array.from(set);
+  }, [rows]);
 
   useEffect(() => {
     if (rows) {
@@ -80,24 +92,30 @@ function MarksEntryPage() {
     }
   }, [rows]);
 
-  const currentRows = useMemo<Row[]>(() => {
+  // বিভাগ অনুযায়ী ফিল্টার করা সারি
+  const filteredRows = useMemo<Row[]>(() => {
     if (!rows) return [];
-    return rows.map((r) => {
+    if (!showDept || deptFilter === "all") return rows;
+    return rows.filter((r) => r.department === deptFilter);
+  }, [rows, showDept, deptFilter]);
+
+  const currentRows = useMemo<Row[]>(() => {
+    return filteredRows.map((r) => {
       const v = edits[r.student_id];
       const n = v === "" || v == null ? null : Number(v);
       return { ...r, marks: n != null && !isNaN(n) ? n : null };
     });
-  }, [rows, edits]);
+  }, [filteredRows, edits]);
 
   const positions = useMemo(() => calcPositions(currentRows), [currentRows]);
 
   const handleSave = async () => {
     if (!exam || !rows) return;
     setSaving(true);
-    // Build upserts for non-empty, deletes for cleared
+    // Build upserts for non-empty, deletes for cleared (only for currently visible rows)
     const toUpsert: { exam_id: string; student_id: string; marks: number }[] = [];
     const toClear: string[] = [];
-    for (const r of rows) {
+    for (const r of filteredRows) {
       const v = edits[r.student_id];
       if (v === "" || v == null) {
         if (r.marks != null) toClear.push(r.student_id);
