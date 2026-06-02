@@ -172,10 +172,30 @@ function MarksEntryPage() {
         </Button>
       </div>
 
+      {showDept && (
+        <div className="bg-white rounded-2xl border p-4 flex items-center gap-3 flex-wrap">
+          <span className="text-sm font-medium text-academy-navy">বিভাগ:</span>
+          <Select value={deptFilter} onValueChange={setDeptFilter}>
+            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">সব বিভাগ</SelectItem>
+              {availableDepts.map((d) => (
+                <SelectItem key={d} value={d}>{DEPT_LABEL[d] ?? d}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="text-xs text-muted-foreground">
+            {currentRows.length} জন শিক্ষার্থী
+          </span>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border overflow-hidden">
         {currentRows.length === 0 ? (
           <div className="p-12 text-center text-muted-foreground">
-            এই শ্রেণিতে কোনো এক্টিভ শিক্ষার্থী নেই
+            {showDept && deptFilter !== "all"
+              ? "এই বিভাগে কোনো এক্টিভ শিক্ষার্থী নেই"
+              : "এই শ্রেণিতে কোনো এক্টিভ শিক্ষার্থী নেই"}
           </div>
         ) : (
           <Table>
