@@ -9,7 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Printer } from "lucide-react";
-import { calcGrade, calcPositions, CLASS_LEVELS, EXAM_TYPE_LABEL, EXAM_PATTERN_LABEL, bnClass } from "@/lib/grading";
+import { calcGrade, calcPositions, CLASS_LEVELS, EXAM_TYPE_LABEL, EXAM_PATTERN_LABEL, bnClass, BATCH_LABEL } from "@/lib/grading";
 
 export const Route = createFileRoute("/admin/marksheet")({
   component: MarksheetPage,
