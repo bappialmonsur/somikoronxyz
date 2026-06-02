@@ -5,6 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from "@/components/ui/table";
 import { toast } from "sonner";
@@ -15,7 +18,19 @@ export const Route = createFileRoute("/admin/results/$examId")({
   component: MarksEntryPage,
 });
 
-type Row = { student_id: string; full_name: string; roll: string | null; marks: number | null };
+type Row = {
+  student_id: string;
+  full_name: string;
+  roll: string | null;
+  marks: number | null;
+  department: string;
+};
+
+const DEPT_LABEL: Record<string, string> = {
+  none: "প্রযোজ্য নয়",
+  science: "বিজ্ঞান",
+  business: "ব্যবসায় শিক্ষা",
+};
 
 function MarksEntryPage() {
   const { examId } = Route.useParams();
@@ -36,7 +51,7 @@ function MarksEntryPage() {
       const [{ data: students, error: e1 }, { data: results, error: e2 }] = await Promise.all([
         supabase
           .from("students")
-          .select("id, full_name, roll")
+          .select("id, full_name, roll, department")
           .eq("class_level", exam!.class_level)
           .eq("is_active", true)
           .order("roll", { ascending: true }),
@@ -49,6 +64,7 @@ function MarksEntryPage() {
         student_id: s.id,
         full_name: s.full_name,
         roll: s.roll,
+        department: (s as any).department ?? "none",
         marks: marksMap.has(s.id) ? marksMap.get(s.id)! : null,
       })) as Row[];
     },
@@ -56,6 +72,17 @@ function MarksEntryPage() {
 
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [deptFilter, setDeptFilter] = useState("all");
+
+  // শ্রেণি ৯-১২ এর জন্য বিভাগ ফিল্টার দেখানো হবে
+  const showDept = ["9", "10", "11", "12"].includes(String(exam?.class_level ?? ""));
+
+  // রোস্টারে আসলে কোন কোন বিভাগ আছে
+  const availableDepts = useMemo(() => {
+    const set = new Set<string>();
+    (rows ?? []).forEach((r) => set.add(r.department));
+    return Array.from(set);
+  }, [rows]);
 
   useEffect(() => {
     if (rows) {
@@ -65,24 +92,30 @@ function MarksEntryPage() {
     }
   }, [rows]);
 
-  const currentRows = useMemo<Row[]>(() => {
+  // বিভাগ অনুযায়ী ফিল্টার করা সারি
+  const filteredRows = useMemo<Row[]>(() => {
     if (!rows) return [];
-    return rows.map((r) => {
+    if (!showDept || deptFilter === "all") return rows;
+    return rows.filter((r) => r.department === deptFilter);
+  }, [rows, showDept, deptFilter]);
+
+  const currentRows = useMemo<Row[]>(() => {
+    return filteredRows.map((r) => {
       const v = edits[r.student_id];
       const n = v === "" || v == null ? null : Number(v);
       return { ...r, marks: n != null && !isNaN(n) ? n : null };
     });
-  }, [rows, edits]);
+  }, [filteredRows, edits]);
 
   const positions = useMemo(() => calcPositions(currentRows), [currentRows]);
 
   const handleSave = async () => {
     if (!exam || !rows) return;
     setSaving(true);
-    // Build upserts for non-empty, deletes for cleared
+    // Build upserts for non-empty, deletes for cleared (only for currently visible rows)
     const toUpsert: { exam_id: string; student_id: string; marks: number }[] = [];
     const toClear: string[] = [];
-    for (const r of rows) {
+    for (const r of filteredRows) {
       const v = edits[r.student_id];
       if (v === "" || v == null) {
         if (r.marks != null) toClear.push(r.student_id);
@@ -139,10 +172,30 @@ function MarksEntryPage() {
         </Button>
       </div>
 
+      {showDept && (
+        <div className="bg-white rounded-2xl border p-4 flex items-center gap-3 flex-wrap">
+          <span className="text-sm font-medium text-academy-navy">বিভাগ:</span>
+          <Select value={deptFilter} onValueChange={setDeptFilter}>
+            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">সব বিভাগ</SelectItem>
+              {availableDepts.map((d) => (
+                <SelectItem key={d} value={d}>{DEPT_LABEL[d] ?? d}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="text-xs text-muted-foreground">
+            {currentRows.length} জন শিক্ষার্থী
+          </span>
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border overflow-hidden">
         {currentRows.length === 0 ? (
           <div className="p-12 text-center text-muted-foreground">
-            এই শ্রেণিতে কোনো এক্টিভ শিক্ষার্থী নেই
+            {showDept && deptFilter !== "all"
+              ? "এই বিভাগে কোনো এক্টিভ শিক্ষার্থী নেই"
+              : "এই শ্রেণিতে কোনো এক্টিভ শিক্ষার্থী নেই"}
           </div>
         ) : (
           <Table>
