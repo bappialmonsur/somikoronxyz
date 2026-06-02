@@ -52,7 +52,7 @@ function MarksheetPage() {
         <p className="text-sm text-muted-foreground">ক্লাস, শিক্ষার্থী ও তারিখ পরিসর সিলেক্ট করে মার্কশীট তৈরি করুন</p>
       </div>
 
-      <div className="bg-white rounded-2xl border p-4 grid sm:grid-cols-2 lg:grid-cols-5 gap-3 print:hidden">
+      <div className="bg-white rounded-2xl border p-4 grid sm:grid-cols-2 lg:grid-cols-6 gap-3 print:hidden">
         <div>
           <Label>শ্রেণি</Label>
           <Select value={cls} onValueChange={(v) => { setCls(v); setStudentId("all"); }}>
