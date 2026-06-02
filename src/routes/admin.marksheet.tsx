@@ -23,21 +23,23 @@ const monthAgoStr = () => {
 
 function MarksheetPage() {
   const [cls, setCls] = useState("");
+  const [batch, setBatch] = useState("all");
   const [studentId, setStudentId] = useState<string>("all");
   const [from, setFrom] = useState(monthAgoStr());
   const [to, setTo] = useState(todayStr());
-  const [generated, setGenerated] = useState<{ cls: string; from: string; to: string; studentId: string } | null>(null);
+  const [generated, setGenerated] = useState<{ cls: string; batch: string; from: string; to: string; studentId: string } | null>(null);
 
   const { data: classStudents } = useQuery({
-    queryKey: ["marksheet-students", cls],
+    queryKey: ["marksheet-students", cls, batch],
     enabled: !!cls,
     queryFn: async () => {
-      const { data, error } = await supabase
+      let q = supabase
         .from("students")
         .select("id, full_name, roll")
         .eq("class_level", cls as any)
-        .eq("is_active", true)
-        .order("roll", { ascending: true });
+        .eq("is_active", true);
+      if (batch !== "all") q = q.eq("batch", batch as any);
+      const { data, error } = await q.order("roll", { ascending: true });
       if (error) throw error;
       return data ?? [];
     },
