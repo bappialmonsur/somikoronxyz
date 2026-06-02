@@ -113,10 +113,16 @@ function MarksheetPage() {
 }
 
 
-function MarksheetView({ cls, from, to, studentId }: { cls: string; from: string; to: string; studentId: string }) {
+function MarksheetView({ cls, batch, from, to, studentId }: { cls: string; batch: string; from: string; to: string; studentId: string }) {
   const { data, isLoading } = useQuery({
-    queryKey: ["marksheet", cls, from, to],
+    queryKey: ["marksheet", cls, batch, from, to],
     queryFn: async () => {
+      let studentQ = supabase
+        .from("students")
+        .select("id, full_name, roll")
+        .eq("class_level", cls as any)
+        .eq("is_active", true);
+      if (batch !== "all") studentQ = studentQ.eq("batch", batch as any);
       const [{ data: students, error: e1 }, { data: exams, error: e2 }] = await Promise.all([
         supabase
           .from("students")
