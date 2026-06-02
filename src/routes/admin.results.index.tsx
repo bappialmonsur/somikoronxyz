@@ -212,6 +212,33 @@ function NewExamDialog({ onDone }: { onDone: () => void }) {
             <Input type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
           </div>
         </div>
+        <div className="grid grid-cols-2 gap-3">
+          {showDept && (
+            <div>
+              <Label>বিভাগ</Label>
+              <Select value={department} onValueChange={setDepartment}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">সব বিভাগ</SelectItem>
+                  <SelectItem value="science">{DEPT_LABEL.science}</SelectItem>
+                  <SelectItem value="business">{DEPT_LABEL.business}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <div>
+            <Label>ব্যাচ</Label>
+            <Select value={batch} onValueChange={setBatch}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">সব ব্যাচ</SelectItem>
+                <SelectItem value="morning">{BATCH_LABEL.morning}</SelectItem>
+                <SelectItem value="afternoon">{BATCH_LABEL.afternoon}</SelectItem>
+                <SelectItem value="evening">{BATCH_LABEL.evening}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <div>
           <Label>শিরোনাম (ঐচ্ছিক)</Label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="যেমন: ১ম সপ্তাহ" />
