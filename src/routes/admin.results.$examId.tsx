@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
-import { calcGrade, calcPositions, EXAM_TYPE_LABEL, EXAM_PATTERN_LABEL, bnClass } from "@/lib/grading";
+import { calcGrade, calcPositions, EXAM_TYPE_LABEL, EXAM_PATTERN_LABEL, bnClass, DEPT_LABEL, BATCH_LABEL, DEPT_CLASS_LEVELS } from "@/lib/grading";
 
 export const Route = createFileRoute("/admin/results/$examId")({
   component: MarksEntryPage,
@@ -24,12 +24,7 @@ type Row = {
   roll: string | null;
   marks: number | null;
   department: string;
-};
-
-const DEPT_LABEL: Record<string, string> = {
-  none: "প্রযোজ্য নয়",
-  science: "বিজ্ঞান",
-  business: "ব্যবসায় শিক্ষা",
+  batch: string;
 };
 
 function MarksEntryPage() {
