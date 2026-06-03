@@ -43,6 +43,7 @@ function StudentFeed() {
         .select(
           "id, body, media_type, media_path, link_url, class_level, created_at, author_id, author_name, author_role, author_meta, status",
         )
+        .eq("is_reel", false)
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
