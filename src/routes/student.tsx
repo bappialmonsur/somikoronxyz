@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { bnClass } from "@/lib/grading";
 import { NotificationsBell } from "@/components/notifications-bell";
+import { PositionPill } from "@/components/class-merit";
 
 export const Route = createFileRoute("/student")({
   head: () => ({
