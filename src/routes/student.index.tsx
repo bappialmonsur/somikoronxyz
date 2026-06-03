@@ -95,7 +95,14 @@ function StudentFeed() {
 
   return (
     <div className="max-w-xl mx-auto space-y-5 pb-10">
+      {/* শ্রেণির মেধাতালিকা (মাসের ১ তারিখ থেকে) */}
+      <ClassMeritStrip userId={user?.id} />
+
+      {/* ফিচার্ড অপশন */}
+      <FeatureCards variant="student" />
+
       <FeedHeader />
+
 
       {/* Student composer */}
       <div className="bg-card rounded-3xl border border-border/70 shadow-sm p-4 space-y-3">
