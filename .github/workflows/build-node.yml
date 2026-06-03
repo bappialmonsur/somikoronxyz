@@ -1,13 +1,26 @@
 name: Build (Node server)
 
-# Auto-build a production Node-server bundle on every push to the main branch.
-# The output lands in ./dist (server entry at dist/server/index.mjs) and is
-# uploaded as a build artifact you can deploy to your cPanel/VPS Node host.
+# Auto-build a production Node-server bundle on every push to the main branch and
+# commit the resulting ./dist folder back to main so it is available via `git pull`
+# on your cPanel/VPS host (server entry at dist/server/index.mjs).
 
 on:
   push:
     branches: [main]
+    # Prevent an infinite loop: when this workflow pushes the built dist folder,
+    # don't trigger another run.
+    paths-ignore:
+      - "dist/**"
   workflow_dispatch:
+
+# Allow the workflow to push commits back to the repository.
+permissions:
+  contents: write
+
+# Avoid overlapping runs racing to push dist.
+concurrency:
+  group: build-node-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -35,10 +48,20 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
 
-      - name: Upload production build
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist
-          if-no-files-found: error
-          retention-days: 7
+      - name: Commit and push dist to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # dist is gitignored, so force-add the built output.
+          git add -f dist
+
+          if git diff --cached --quiet; then
+            echo "No changes in dist — nothing to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: build dist [skip ci]"
+          # Rebase on any concurrent changes, then push.
+          git pull --rebase origin main
+          git push origin HEAD:main
