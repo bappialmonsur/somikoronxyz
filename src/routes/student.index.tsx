@@ -11,6 +11,7 @@ import { bnClass, bnNum } from "@/lib/grading";
 import { FeedHeader, FeedList, type FeedPost } from "@/components/news-feed";
 import { ClassMeritStrip } from "@/components/class-merit";
 import { FeatureCards } from "@/components/feature-cards";
+import { ReelsStrip } from "@/components/reels";
 
 export const Route = createFileRoute("/student/")({
   component: StudentFeed,
