@@ -72,9 +72,13 @@ jobs:
 
           git commit -m "chore: build dist [skip ci]"
 
-          # Rebase onto the latest main, then push. Fetch first so the rebase
-          # target exists even on a fresh shallow-free checkout.
+          # Rebase onto the latest main. --autostash safely stashes any other
+          # unstaged changes left by the build and restores them afterward,
+          # avoiding "cannot rebase: You have unstaged changes".
           git fetch origin main
-          git rebase origin/main
+          git rebase --autostash origin/main
+
+          # Push the dist commit back to main.
           git push origin HEAD:main
+
 
