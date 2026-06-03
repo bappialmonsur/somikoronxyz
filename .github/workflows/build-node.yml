@@ -26,9 +26,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # Job-level permission so the checkout token can push back to the repo.
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Full history + persisted credentials are required to rebase and push.
+          fetch-depth: 0
+          persist-credentials: true
+
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
