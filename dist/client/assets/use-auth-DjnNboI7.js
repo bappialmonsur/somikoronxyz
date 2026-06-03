@@ -1,0 +1,1 @@
+import{r as s,s as a}from"./index-CyByoLmZ.js";function l(){const[e,t]=s.useState(null),[o,n]=s.useState(!0);return s.useEffect(()=>{const{data:{subscription:r}}=a.auth.onAuthStateChange((u,i)=>{t(i),n(!1)});return a.auth.getSession().then(({data:u})=>{t(u.session),n(!1)}),()=>r.unsubscribe()},[]),{session:e,user:e?.user??null,loading:o}}export{l as u};
