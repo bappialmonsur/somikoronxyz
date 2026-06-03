@@ -1,0 +1,44 @@
+name: Build (Node server)
+
+# Auto-build a production Node-server bundle on every push to the main branch.
+# The output lands in ./dist (server entry at dist/server/index.mjs) and is
+# uploaded as a build artifact you can deploy to your cPanel/VPS Node host.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build for Node server
+        run: bun run build:node
+        env:
+          NITRO_PRESET: node-server
+          # Public Vite env vars needed at build time. Add these as repo secrets
+          # (Settings -> Secrets and variables -> Actions) for your deployment.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+
+      - name: Upload production build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
