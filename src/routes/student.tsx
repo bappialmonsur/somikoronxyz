@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { bnClass } from "@/lib/grading";
 import { NotificationsBell } from "@/components/notifications-bell";
+import { PositionPill } from "@/components/class-merit";
 
 export const Route = createFileRoute("/student")({
   head: () => ({
@@ -103,6 +104,7 @@ function StudentLayout() {
               <div className="text-xs text-muted-foreground hidden sm:block truncate">
                 {student.full_name} · {bnClass(student.class_level)}
               </div>
+              <PositionPill userId={user?.id} />
               <NotificationsBell />
             </div>
           </header>
