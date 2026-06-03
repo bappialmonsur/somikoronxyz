@@ -71,6 +71,10 @@ jobs:
           fi
 
           git commit -m "chore: build dist [skip ci]"
-          # Rebase on any concurrent changes, then push.
-          git pull --rebase origin main
+
+          # Rebase onto the latest main, then push. Fetch first so the rebase
+          # target exists even on a fresh shallow-free checkout.
+          git fetch origin main
+          git rebase origin/main
           git push origin HEAD:main
+
