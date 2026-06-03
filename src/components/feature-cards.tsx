@@ -74,8 +74,9 @@ const studentCards: Card[] = [
 
 export function FeatureCards({ variant }: { variant: "admin" | "student" }) {
   const cards = variant === "admin" ? adminCards : studentCards;
+  const gridCols = cards.length === 4 ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-3";
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className={`grid ${gridCols} gap-4`}>
       {cards.map((c) => (
         <Link
           key={c.title}
