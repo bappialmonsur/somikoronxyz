@@ -1,23 +1,14 @@
 name: Build (Node server)
-
-# Auto-build a production Node-server bundle on every push to the main branch and
-# commit the resulting ./dist folder back to main so it is available via `git pull`
-# on your cPanel/VPS host (server entry at dist/server/index.mjs).
-
 on:
   push:
     branches: [main]
-    # Prevent an infinite loop: when this workflow pushes the built dist folder,
-    # don't trigger another run.
     paths-ignore:
       - "dist/**"
   workflow_dispatch:
 
-# Allow the workflow to push commits back to the repository.
 permissions:
   contents: write
 
-# Avoid overlapping runs racing to push dist.
 concurrency:
   group: build-node-${{ github.ref }}
   cancel-in-progress: true
@@ -25,19 +16,14 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    # Job-level permission so the checkout token can push back to the repo.
     permissions:
       contents: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Full history + persisted credentials are required to rebase and push.
           fetch-depth: 0
           persist-credentials: true
-
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -47,12 +33,17 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Build client (Vite)
+        run: bun run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+
       - name: Build for Node server
         run: bun run build:node
         env:
           NITRO_PRESET: node-server
-          # Public Vite env vars needed at build time. Add these as repo secrets
-          # (Settings -> Secrets and variables -> Actions) for your deployment.
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
@@ -61,24 +52,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # dist is gitignored, so force-add the built output.
           git add -f dist
-
           if git diff --cached --quiet; then
             echo "No changes in dist — nothing to commit."
             exit 0
           fi
-
           git commit -m "chore: build dist [skip ci]"
-
-          # Rebase onto the latest main. --autostash safely stashes any other
-          # unstaged changes left by the build and restores them afterward,
-          # avoiding "cannot rebase: You have unstaged changes".
           git fetch origin main
           git rebase --autostash origin/main
-
-          # Push the dist commit back to main.
           git push origin HEAD:main
-
-
