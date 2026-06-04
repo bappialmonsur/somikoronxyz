@@ -6,4 +6,3 @@ deployment:
     - /bin/cp package.json $DEPLOYPATH
     - /bin/cp bun.lock $DEPLOYPATH
     - cd $DEPLOYPATH && npm install --production
-    - cd $DEPLOYPATH && node dist/server/index.mjs
